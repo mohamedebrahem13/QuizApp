@@ -21,4 +21,9 @@ class QuizRepositoryImpl(
         // Fetch quiz questions from the local source (e.g., Room)
         return quizQuestionMapper.entityListToDomainList(localDataSource.fetchQuestions()) // Convert to domain model}
     }
+
+    override suspend fun saveQuizQuestions(questions: List<QuizQuestion>) {
+        // Save quiz questions to the local source (e.g., Room)
+        localDataSource.insertQuestion(quizQuestionMapper.domainListToEntityList(questions)) // Convert to entity model
+        }
 }

@@ -16,10 +16,17 @@ class GetQuizQuestionsUseCase @Inject constructor(
         try {
             val remoteQuestions = quizRepository.getQuizQuestionsFromRemote()
             if (remoteQuestions.isNotEmpty()) {
+                quizRepository.saveQuizQuestions(remoteQuestions)
                 emit(Resource.Success(remoteQuestions))
             } else {
                 val localQuestions = quizRepository.getQuizQuestionsFromLocal()
-                emit(Resource.Success(localQuestions))
+
+                // Corrected this condition
+                if (localQuestions.isNotEmpty()) {
+                    emit(Resource.Success(localQuestions))
+                } else {
+                    emit(Resource.Error("No quiz questions available locally or remotely."))
+                }
             }
         } catch (exception: Exception) {
             emit(Resource.Error("Failed to fetch quiz questions: ${exception.localizedMessage}"))

@@ -6,6 +6,8 @@ plugins {
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1"
     kotlin("kapt")
     alias(libs.plugins.kotlin.serialization)
+    id("com.google.devtools.ksp") version "2.0.21-1.0.27"
+
 }
 android {
     namespace = "com.example.quizapp"
@@ -43,6 +45,11 @@ android {
 }
 
 dependencies {
+    // Room dependencies
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+
     implementation(libs.accompanist.pager)
     implementation(libs.accompanist.pager.indicators)
 

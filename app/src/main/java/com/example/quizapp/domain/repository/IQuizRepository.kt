@@ -6,4 +6,5 @@ import com.example.quizapp.domain.model.QuizQuestion
 interface IQuizRepository {
     suspend fun getQuizQuestionsFromRemote(): List<QuizQuestion>
     suspend fun getQuizQuestionsFromLocal(): List<QuizQuestion>
+    suspend fun saveQuizQuestions(questions: List<QuizQuestion>)
 }

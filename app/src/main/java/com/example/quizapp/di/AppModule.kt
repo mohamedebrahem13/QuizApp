@@ -3,6 +3,7 @@ package com.example.quizapp.di
 import com.example.quizapp.data.QuizMapper
 import com.example.quizapp.data.repository.QuizRepositoryImpl
 import com.example.quizapp.data.repository.local.QuizLocalDS
+import com.example.quizapp.data.repository.local.room.QuizDao
 import com.example.quizapp.data.repository.remote.QuizRemoteDS
 import com.example.quizapp.domain.intractor.GetQuizQuestionsUseCase
 import com.example.quizapp.domain.repository.IQuizRepository
@@ -20,8 +21,9 @@ object AppModule {
     @Provides
     fun provideQuizDataSource(): IQuizRemoteDS = QuizRemoteDS()
 
+    // Provide Local Data Source with DAO injection
     @Provides
-    fun provideQuizLocalDataSource(): IQuizLocalDS = QuizLocalDS()
+    fun provideQuizLocalDataSource(quizDao: QuizDao): IQuizLocalDS = QuizLocalDS(quizDao)
 
     // Provide QuizRepository
     @Provides

@@ -2,7 +2,7 @@ package com.example.quizapp.data
 
 import com.example.quizapp.common.Mapper
 import com.example.quizapp.data.model.QuizQuestionDto
-import com.example.quizapp.data.repository.local.model.QuizQuestionEntity
+import com.example.quizapp.data.repository.local.room.model.QuizQuestionEntity
 import com.example.quizapp.domain.model.QuizQuestion
 
 object  QuizMapper : Mapper<QuizQuestionDto, QuizQuestion, QuizQuestionEntity>() {
@@ -17,6 +17,14 @@ object  QuizMapper : Mapper<QuizQuestionDto, QuizQuestion, QuizQuestionEntity>()
 
     }
 
+    override fun domainToEntity(model: QuizQuestion): QuizQuestionEntity {
+        return QuizQuestionEntity(
+            question = model.question,
+            options = model.options,
+            correctAnswer = model.correctAnswer
+        )
+    }
+
     // Mapping from Entity (Local DB) to Domain Model
     override fun entityToDomain(model: QuizQuestionEntity): QuizQuestion {
         return QuizQuestion(
@@ -25,9 +33,13 @@ object  QuizMapper : Mapper<QuizQuestionDto, QuizQuestion, QuizQuestionEntity>()
             correctAnswer = model.correctAnswer
         )
     }
+
     // New method to map a list of DTOs to a list of Domain Models
     fun dtoListToDomainList(dtoList: List<QuizQuestionDto>): List<QuizQuestion> {
         return dtoList.map { dtoToDomain(it) } // Use the existing mapping method for each item
+    }
+    fun domainListToEntityList(domainList: List<QuizQuestion>): List<QuizQuestionEntity> {
+        return domainList.map { domainToEntity(it) } // Use the existing mapping method for each item
     }
 
     // New method to map a list of Entities to a list of Domain Models
