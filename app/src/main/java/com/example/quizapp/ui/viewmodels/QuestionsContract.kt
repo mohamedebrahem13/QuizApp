@@ -12,12 +12,11 @@ interface QuestionsContract {
         data class SelectOption(val selectedOption: Int) : QuestionsAction()  // New Action
         data object LoadNextQuestion : QuestionsAction() // Trigger loading next question
         data object SubmitAnswer : QuestionsAction() // Submit an answer
+
     }
 
     // Events: Events triggered based on logic like whether the answer is correct or wrong
     sealed class QuestionsEvent : ViewEvent {
-        data object CorrectAnswer : QuestionsEvent() // The user's answer was correct
-        data object IncorrectAnswer : QuestionsEvent() // The user's answer was incorrect
         data object QuizFinished : QuestionsEvent() // The quiz is finished
     }
 
@@ -31,7 +30,6 @@ interface QuestionsContract {
         val currentQuestionIndex: Int = 0, // Track current question index
         val totalQuestions: Int = 0, // Total number of questions in the quiz
         val isAnswerCorrect: Boolean? = null, // Indicates if the last answer was correct
-        val isQuizFinished: Boolean = false, // To check if the quiz is completed
         val exception: String? = null,
         val selectedOption: Int = -1  // Added this line
     ) : ViewState {
