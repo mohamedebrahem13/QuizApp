@@ -30,13 +30,11 @@ class QuestionsViewModel @Inject constructor ( private val getQuizQuestionsUseCa
                 score = oldViewState.score + 1,
                 isAnswerCorrect = true
             ))
-            sendEvent(QuestionsContract.QuestionsEvent.CorrectAnswer)
         } else {
             // Incorrect answer
             setState(oldViewState.copy(
                 isAnswerCorrect = false
             ))
-            sendEvent(QuestionsContract.QuestionsEvent.IncorrectAnswer)
         }
     }
     private fun onOptionSelected(index: Int) {
@@ -55,8 +53,6 @@ class QuestionsViewModel @Inject constructor ( private val getQuizQuestionsUseCa
                 , selectedOption = -1 // Reset the selected option
             ))
         } else {
-            // If all questions are answered, mark the quiz as finished
-            setState(oldViewState.copy(isQuizFinished = true))
             sendEvent(QuestionsContract.QuestionsEvent.QuizFinished)
         }
     }
