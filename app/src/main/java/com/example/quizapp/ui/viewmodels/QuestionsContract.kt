@@ -9,8 +9,9 @@ interface QuestionsContract {
 
     // Actions: User actions that trigger state changes
     sealed class QuestionsAction : ViewAction {
+        data class SelectOption(val selectedOption: Int) : QuestionsAction()  // New Action
         data object LoadNextQuestion : QuestionsAction() // Trigger loading next question
-        data class SubmitAnswer(val selectedIndex: Int) : QuestionsAction() // Submit an answer
+        data object SubmitAnswer : QuestionsAction() // Submit an answer
     }
 
     // Events: Events triggered based on logic like whether the answer is correct or wrong
@@ -31,7 +32,8 @@ interface QuestionsContract {
         val totalQuestions: Int = 0, // Total number of questions in the quiz
         val isAnswerCorrect: Boolean? = null, // Indicates if the last answer was correct
         val isQuizFinished: Boolean = false, // To check if the quiz is completed
-        val exception: String? = null
+        val exception: String? = null,
+        val selectedOption: Int = -1  // Added this line
     ) : ViewState {
         companion object {
             fun initial() = QuestionsViewState()

@@ -20,8 +20,9 @@ class QuestionsViewModel @Inject constructor ( private val getQuizQuestionsUseCa
         loadQuestions()  // Load questions when the ViewModel is initialized
     }
     // Submit an answer and update the state accordingly
-    private fun submitAnswer(selectedIndex: Int) {
+    private fun submitAnswer() {
         val currentQuestion = oldViewState.currentQuestion ?: return
+        val selectedIndex = oldViewState.selectedOption
 
         if (selectedIndex == currentQuestion.correctAnswer) {
             // Correct answer: update score
@@ -38,6 +39,9 @@ class QuestionsViewModel @Inject constructor ( private val getQuizQuestionsUseCa
             sendEvent(QuestionsContract.QuestionsEvent.IncorrectAnswer)
         }
     }
+    private fun onOptionSelected(index: Int) {
+        setState(oldViewState.copy(selectedOption = index)) }
+
 
     // Move to the next question when the user triggers the action
     private fun moveToNextQuestion() {
@@ -48,6 +52,7 @@ class QuestionsViewModel @Inject constructor ( private val getQuizQuestionsUseCa
                 currentQuestion = oldViewState.questions[nextIndex],
                 currentQuestionIndex = nextIndex,
                 isAnswerCorrect = null // Reset the answer status for the next question
+                , selectedOption = -1 // Reset the selected option
             ))
         } else {
             // If all questions are answered, mark the quiz as finished
@@ -64,7 +69,10 @@ class QuestionsViewModel @Inject constructor ( private val getQuizQuestionsUseCa
                     moveToNextQuestion()
             }
             is QuestionsContract.QuestionsAction.SubmitAnswer -> {
-                submitAnswer(action.selectedIndex) // Handle the answer submission
+                submitAnswer() // Handle the answer submission
+            }
+            is QuestionsContract.QuestionsAction.SelectOption -> {
+                onOptionSelected(action.selectedOption)
             }
         }
     }
