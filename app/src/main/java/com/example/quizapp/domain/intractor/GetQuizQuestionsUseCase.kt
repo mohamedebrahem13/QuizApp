@@ -3,26 +3,26 @@ package com.example.quizapp.domain.intractor
 import com.example.quizapp.common.Resource
 import com.example.quizapp.domain.model.QuizQuestion
 import com.example.quizapp.domain.repository.IQuizRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GetQuizQuestionsUseCase @Inject constructor(
     private val quizRepository: IQuizRepository
 ) {
+    operator fun invoke(): Flow<Resource<List<QuizQuestion>>> = flow {
+        emit(Resource.Loading)  // Emit loading state
 
-    suspend operator fun invoke(): Resource<List<QuizQuestion>> {
-        return try {
+        try {
             val remoteQuestions = quizRepository.getQuizQuestionsFromRemote()
             if (remoteQuestions.isNotEmpty()) {
-                // Return the questions fetched from remote
-                Resource.Success(remoteQuestions)
+                emit(Resource.Success(remoteQuestions))
             } else {
-                // Fallback to local if remote is empty
                 val localQuestions = quizRepository.getQuizQuestionsFromLocal()
-                Resource.Success(localQuestions)
+                emit(Resource.Success(localQuestions))
             }
         } catch (exception: Exception) {
-            // Handle any errors (network issues, data parsing, etc.)
-            Resource.Error("Failed to fetch quiz questions: ${exception.localizedMessage}")
+            emit(Resource.Error("Failed to fetch quiz questions: ${exception.localizedMessage}"))
         }
     }
 }

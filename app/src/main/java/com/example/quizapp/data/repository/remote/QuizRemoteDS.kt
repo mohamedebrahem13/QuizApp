@@ -2,9 +2,11 @@ package com.example.quizapp.data.repository.remote
 
 import com.example.quizapp.data.model.QuizQuestionDto
 import com.example.quizapp.domain.repository.remote.IQuizRemoteDS
+import kotlinx.coroutines.delay
 
 class QuizRemoteDS : IQuizRemoteDS {
-    override fun fetchQuestions(): List<QuizQuestionDto> {
+    override suspend fun fetchQuestions(): List<QuizQuestionDto> {
+        delay(2000)
         return listOf(
             QuizQuestionDto("What is the capital of France?", listOf("Berlin", "Paris", "Madrid", "Rome"), 1),
             QuizQuestionDto("Which planet is known as the Red Planet?", listOf("Earth", "Venus", "Mars", "Jupiter"), 2),

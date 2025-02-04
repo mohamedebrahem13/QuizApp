@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun FinishedScreen(score: Int) {
+fun FinishedScreen(score: Int, onTryAgain: () -> Unit) { // Added onTryAgain callback
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -30,7 +30,7 @@ fun FinishedScreen(score: Int) {
             Spacer(modifier = Modifier.height(20.dp))
             Text(text = "Your Score: $score", fontSize = 24.sp)
             Spacer(modifier = Modifier.height(20.dp))
-            Button(onClick = { /* Navigate back or restart quiz */ }) {
+            Button(onClick = { onTryAgain() }) { // Trigger the callback on click
                 Text(text = "Try Again")
             }
         }
