@@ -77,24 +77,29 @@ class QuestionsViewModel @Inject constructor ( private val getQuizQuestionsUseCa
     private fun loadQuestions() {
         // Call the UseCase to get the questions
         viewModelScope.launch {
-            when (val result = getQuizQuestionsUseCase()) {
-                is Resource.Success -> {
-                    // On success, update the state with the quiz questions
-                    setState(oldViewState.copy(
-                        totalQuestions = result.data.size,
-                        currentQuestion = result.data.first(),
-                        questions = result.data
-                    ))
+            getQuizQuestionsUseCase().collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        // On success, update the state with the quiz questions
+                        setState(oldViewState.copy(
+                            totalQuestions = result.data.size,
+                            currentQuestion = result.data.firstOrNull(),  // Using firstOrNull() to prevent crashes if the list is empty
+                            questions = result.data,
+                            isLoading = false
+                        ))
+                    }
+                    is Resource.Error -> {
+                        // Handle errors (e.g., show a toast or an error message)
+                        setState(oldViewState.copy(
+                            isLoading = false,
+                            exception = result.message
+                        ))
+                    }
+                    is Resource.Loading -> {
+                        // Update state to indicate loading
+                        setState(oldViewState.copy(isLoading = true))
+                    }
                 }
-                is Resource.Error -> {
-                    // Handle errors (e.g., show a toast or an error message)
-                    setState(oldViewState.copy(
-                        isLoading = false,
-                        exception = result.message
-                    ))
-                }
-
-                Resource.Loading -> setState(oldViewState.copy(isLoading = true))
             }
         }
     }

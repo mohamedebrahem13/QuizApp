@@ -44,7 +44,9 @@ class MainActivity : ComponentActivity() {
             }
             composable<Finish> { backStackEntry ->
                 val score = backStackEntry.toRoute<Finish>()
-                FinishedScreen(score.score)
+                FinishedScreen(score.score){
+                    navController.navigate(Question)
+                }
             }
         }
     }

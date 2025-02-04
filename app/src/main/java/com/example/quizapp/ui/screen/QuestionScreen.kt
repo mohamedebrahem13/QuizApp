@@ -12,8 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,132 +50,148 @@ fun QuestionScreen(onQuizFinished: (Int) -> Unit, viewModel: QuestionsViewModel 
         viewModel.singleEvent.collect { onQuizFinished(state.score) }
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp), // Adjust padding as needed
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Center
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
     ) {
-        // Display Score
-        Text(
-            text = "Score: ${state.score}",
-            style = MaterialTheme.typography.headlineSmall
-        )
+        if (state.isLoading) {
+            // Show Loading Indicator
+            CircularProgressIndicator()
+        } else {
+            // Show Quiz Content when not loading
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Center
+            ) {
+                // Display Score
+                Text(
+                    text = "Score: ${state.score}",
+                    style = MaterialTheme.typography.headlineSmall
+                )
 
-        Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(MaterialTheme.shapes.medium), // Rounded corners
-            color = Color.Gray
-        ) {
-            Box(modifier = Modifier.fillMaxWidth()) {
-                HorizontalPager(
-                    count = state.questions.size,
-                    state = pagerState,
-                    userScrollEnabled = false,  // Disable manual scrolling
+                Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp) // Add bottom padding to avoid overlap with indicator
-                ) { page ->
-                    val question = state.questions[page]
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                    ) {
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Text(
-                            text = question.question,
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = Color.White
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        question.options.forEachIndexed { index, answer ->
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
+                        .clip(MaterialTheme.shapes.medium), // Rounded corners
+                    color = Color(0xFF03DAC5)
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        HorizontalPager(
+                            count = state.questions.size,
+                            state = pagerState,
+                            userScrollEnabled = false,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp)
+                        ) { page ->
+                            val question = state.questions[page]
+                            Column(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(vertical = 4.dp)
+                                    .padding(16.dp)
                             ) {
-                                RadioButton(
-                                    selected = state.selectedOption == index,
-                                    onClick = {
-                                        if (state.isAnswerCorrect == null) {
-                                            viewModel.onActionTrigger(QuestionsContract.QuestionsAction.SelectOption(index))
-                                        }
-                                    }
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                Text(
+                                    text = question.question,
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    color = Color.White
                                 )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(text = answer, style = MaterialTheme.typography.bodyLarge, color = Color.White)
-                                // Display Correct/Incorrect beside the selected answer
-                                if (state.selectedOption == index && state.isAnswerCorrect != null) {
-                                    val resultText = if (state.isAnswerCorrect == true) "Correct!" else "Incorrect!"
-                                    val resultColor = if (state.isAnswerCorrect == true) Color.Green else Color.Red
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = resultText,
-                                        color = resultColor,
-                                        style = MaterialTheme.typography.bodyLarge
-                                    )
+
+                                Spacer(modifier = Modifier.height(16.dp))
+
+                                question.options.forEachIndexed { index, answer ->
+                                    val isSelected = state.selectedOption == index
+                                    val isCorrectAnswer = state.isAnswerCorrect == true && isSelected
+                                    val isIncorrectAnswer = state.isAnswerCorrect == false && isSelected
+
+                                    val radioButtonColor = when {
+                                        isCorrectAnswer -> Color.Green
+                                        isIncorrectAnswer -> Color.Red
+                                        else -> Color.White  // Default color
+                                    }
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp)
+                                    ) {
+                                        RadioButton(
+                                            selected = state.selectedOption == index,
+                                            onClick = {
+                                                if (state.isAnswerCorrect == null) {
+                                                    viewModel.onActionTrigger(QuestionsContract.QuestionsAction.SelectOption(index))
+                                                }
+                                            }, colors = RadioButtonDefaults.colors(
+                                                    selectedColor = radioButtonColor,
+                                            unselectedColor = Color.White  // Color for unselected options
+                                        )
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = answer,
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = Color.White
+                                        )
+
+
+                                    }
                                 }
                             }
                         }
 
-
+                        ProgressBarIndicator(
+                            currentPage = pagerState.currentPage,
+                            totalPages = state.questions.size
+                        )
                     }
                 }
 
-                ProgressBarIndicator(
-                    currentPage = pagerState.currentPage,
-                    totalPages = state.questions.size
-                )
+                Spacer(modifier = Modifier.height(16.dp))
 
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Bottom Bar with Buttons
-        BottomAppBar(
-            modifier = Modifier.fillMaxWidth(),
-            containerColor = Color.Transparent
-        ) {
-            Button(
-                onClick = {
-                    // Move to next question
-                    viewModel.onActionTrigger(QuestionsContract.QuestionsAction.LoadNextQuestion)
-                    // Move pager to next question
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                // Bottom Bar with Buttons
+                BottomAppBar(
+                    modifier = Modifier.fillMaxWidth(),
+                    containerColor = Color.Transparent
+                ) {
+                    // Next/Finish Button
+                    Button(
+                        onClick = {
+                            viewModel.onActionTrigger(QuestionsContract.QuestionsAction.LoadNextQuestion)
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            }
+                        },
+                        modifier = Modifier.weight(1f),
+                        enabled = state.isAnswerCorrect != null,
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC5))
+                    ) {
+                        Text(
+                            if (pagerState.currentPage == state.questions.size - 1) "Finish" else "Next",
+                            color = Color.White
+                        )
                     }
-                },
-                modifier = Modifier.weight(1f),
-                enabled = state.isAnswerCorrect != null // Ensure next is only enabled if answer was submitted
-            ) {
-                Text(if (pagerState.currentPage == state.questions.size - 1) "Finish" else "Next")
-            }
-            Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(16.dp))
 
-            Button(
-                onClick = {
-                    if (state.selectedOption != -1 && state.isAnswerCorrect == null) {
-                        // Submit the answer
-                        viewModel.onActionTrigger(QuestionsContract.QuestionsAction.SubmitAnswer)
+                    // Submit Button
+                    Button(
+                        onClick = {
+                            if (state.selectedOption != -1 && state.isAnswerCorrect == null) {
+                                viewModel.onActionTrigger(QuestionsContract.QuestionsAction.SubmitAnswer)
+                            }
+                        },
+                        modifier = Modifier.weight(1f),
+                        enabled = state.selectedOption != -1 && state.isAnswerCorrect == null,
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF03DAC5))
+                    ) {
+                        Text("Submit", color = Color.Black)
                     }
-                },
-                modifier = Modifier.weight(1f),
-                enabled = state.selectedOption != -1 && state.isAnswerCorrect == null
-            ) {
-                Text("Submit")
+                }
             }
-
-
         }
     }
 }
