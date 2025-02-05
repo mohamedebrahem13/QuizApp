@@ -2,6 +2,11 @@ Quiz App
 Introduction
 This Quiz App is an Android application designed to demonstrate modern Android development practices. It is a good example for practicing Clean Architecture, MVI, Room Database, and Jetpack Compose, among other technologies. The app allows users to take a quiz and stores questions locally using Room Database.
 
+## Demo Video
+You can watch a demo of the app in action on LinkedIn:
+
+[Watch the Demo on LinkedIn](https://www.linkedin.com/posts/mohamed-ebrahaim_androiddevelopment-jetpackcompose-mvi-activity-7292816074146766850-rJcE?utm_source=share&utm_medium=member_desktop&rcm=ACoAACXXUMcBRCaaIjYc6vshOiChjivWU8TDDO4)
+
 Features
 Clean Architecture: Separation of concerns into data, domain, and UI layers.
 MVI: Implements unidirectional data flow for a predictable state management.
