@@ -1,3 +1,4 @@
+![Image](https://github.com/user-attachments/assets/294a7439-1b02-4b92-9729-5124a60eaea7)
 Quiz App 
 Introduction
 This Quiz App is an Android application designed to demonstrate modern Android development practices. It is a good example for practicing Clean Architecture, MVI, Room Database, and Jetpack Compose, among other technologies. The app allows users to take a quiz and stores questions locally using Room Database.
